@@ -4,7 +4,8 @@ import * as Location from 'expo-location';
 import * as TaskManager from "expo-task-manager";
 
 
-TaskManager.defineTask('test-app-location', ({ data, error }) => {
+const taskName = 'test-app-location';
+TaskManager.defineTask(taskName, ({ data, error }) => {
   console.log('Hello - task received execution');
   if (error) {
     // Error occurred - check `error.message` for more details.
@@ -22,8 +23,8 @@ TaskManager.defineTask('test-app-location', ({ data, error }) => {
 
 export default class App extends Component {
   async startTracking() {
-    console.log('Is task defined', TaskManager.isTaskDefined('test-app-location'));
-    Location.startLocationUpdatesAsync('test-app-location', {
+    console.log('Is task defined', TaskManager.isTaskDefined(taskName));
+    Location.startLocationUpdatesAsync(taskName, {
       accuracy: Location.Accuracy.BestForNavigation,
       showsBackgroundLocationIndicator: true,
       deferredUpdatesInterval: 1000,
@@ -39,10 +40,10 @@ export default class App extends Component {
   }
 
   async stopTracking() {
-    console.log('Is task defined', TaskManager.isTaskDefined('test-app-location'));
-    Location.hasStartedLocationUpdatesAsync('test-app-location').then((result) => {
+    console.log('Is task defined', TaskManager.isTaskDefined(taskName));
+    Location.hasStartedLocationUpdatesAsync(taskName).then((result) => {
       if (result) {
-        Location.stopLocationUpdatesAsync('test-app-location').then(() => {
+        Location.stopLocationUpdatesAsync(taskName).then(() => {
           console.log('Location updates stopped');
         });
       }
@@ -55,9 +56,9 @@ export default class App extends Component {
     await Location.requestForegroundPermissionsAsync()
     await Location.requestBackgroundPermissionsAsync()
 
-    Location.hasStartedLocationUpdatesAsync('test-app-location').then((result) => {
+    Location.hasStartedLocationUpdatesAsync(taskName).then((result) => {
       if (result) {
-        Location.stopLocationUpdatesAsync('test-app-location').then(() => {
+        Location.stopLocationUpdatesAsync(taskName).then(() => {
           console.log('Location updates stopped');
         });
       }

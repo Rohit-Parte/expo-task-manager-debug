@@ -22,8 +22,7 @@ TaskManager.defineTask('test-app-location', ({ data, error }) => {
 
 export default class App extends Component {
   async startTracking() {
-    console.log('Attempting to start tracking.');
-    console.log(TaskManager.isTaskDefined('test-app-location'));
+    console.log('Is task defined', TaskManager.isTaskDefined('test-app-location'));
     Location.startLocationUpdatesAsync('test-app-location', {
       accuracy: Location.Accuracy.BestForNavigation,
       showsBackgroundLocationIndicator: true,
@@ -31,12 +30,25 @@ export default class App extends Component {
       timeInterval: 1000,
       foregroundService: { notificationTitle: 'GPS', notificationBody: 'Tracking in progress', notificationColor: '#029a9a' }
     }).then(() => {
-      console.log('Location tracking - Background task');
+      console.log('Location updates started');
     }).catch((err) => {
       console.error('Unable to start tracking')
       console.error(err);
     });
 
+  }
+
+  async stopTracking() {
+    console.log('Is task defined', TaskManager.isTaskDefined('test-app-location'));
+    Location.hasStartedLocationUpdatesAsync('test-app-location').then((result) => {
+      if (result) {
+        Location.stopLocationUpdatesAsync('test-app-location').then(() => {
+          console.log('Location updates stopped');
+        });
+      }
+    }).catch((err) => {
+      console.log('stopTracking', err);
+    })
   }
 
   async componentDidMount() {
@@ -49,6 +61,8 @@ export default class App extends Component {
           console.log('Location updates stopped');
         });
       }
+    }).catch((err) => {
+      console.log(err);
     })
   }
 
@@ -59,7 +73,14 @@ export default class App extends Component {
           style={{ backgroundColor: '#004470', borderRadius: 5, padding: 20 }}
           onPress={() => { this.startTracking() }}
         >
-          <Text style={{ color: '#fff' }}>Click here to start tracking</Text>
+          <Text style={{ color: '#fff' }}>Start</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{ backgroundColor: '#ff0000', borderRadius: 5, padding: 20, marginTop: 20 }}
+          onPress={() => { this.stopTracking() }}
+        >
+          <Text style={{ color: '#fff' }}>Stop</Text>
         </TouchableOpacity>
       </View>
     );
